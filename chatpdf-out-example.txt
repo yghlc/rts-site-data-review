@@ -1,0 +1,19 @@
+
+for paper: Assessing volumetric change distributions and scaling relations of retrogressive thaw slumps across the Arctic
+
+Yes, the paper studied 10 different study sites located in permafrost regions across the Arctic. The study sites are listed as follows:
+1. Peel Plateau and Richardson Mountains ("Peel") - Latitude: 67.5°N to 68.5°N, Longitude: 133.5°W to 138.5°W
+2. Banks Island ("Banks") - Latitude: 72.5°N to 74.5°N, Longitude: 121.5°W to 126.5°W
+3. Western Mackenzie River delta - Latitude: 68.5°N to 69.5°N, Longitude: 133.5°W to 136.5°W
+4. Herschel Island - Latitude: 69.5°N to 70.5°N, Longitude: 138.5°W to 140.5°W
+5. Qikiqtaruk - Latitude: 69.5°N to 70.5°N, Longitude: 138.5°W to 140.5°W
+6. Adventdalen - Latitude: 78.5°N to 79.5°N, Longitude: 15.5°E to 17.5°E
+7. Yamal Peninsula and Gydan Peninsula - Latitude: 68.5°N to 70.5°N, Longitude: 65.5°E to 75.5°E
+8. Taymyr Peninsula - Latitude: 73.5°N to 75.5°N, Longitude: 95.5°E to 105.5°E
+9. Sobo-Sise Island - Latitude: 73.5°N to 74.5°N, Longitude: 113.5°E to 115.5°E
+10. Kytalyk - Latitude: 70.5°N to 71.5°N, Longitude: 147.5°W to 149.5°W
+
+# after save these lat-lon into shapefile and compare with the original paper,
+# they are incorrect. These lattitude and longitude are not saved in the paper
+# and I don't know how the AI come up with these.
+
