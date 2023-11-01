@@ -112,9 +112,10 @@ def extract_paper_info(dataframe):
 
 
     # remove duplicate records
-    df = dataframe.drop_duplicates() # subset="Article Title"
+    df = dataframe.drop_duplicates(subset=["Article Title", "Authors"]) # subset="Article Title"
     print('record count after removing duplicates:', len(df))
 
+    df = df.sort_values('Article Title').reset_index()
     #
     df_col_sel = df[attribute_list]
     sheet_dict = {'all-webofscience': df_col_sel}
@@ -134,15 +135,26 @@ def extract_paper_info(dataframe):
             location.append('NA')
         date_list.append(','.join(date))
         location_list.append(','.join(location))
-    df_col_sel.insert(loc=2,column='inv-regions', value=location_list)
-    df_col_sel.insert(loc=3,column='inv-period', value=date_list)
+    df_col_sel.insert(loc=2,column='regions-from-Abstract-byAI', value=location_list)
+    df_col_sel.insert(loc=3,column='period-from-Abstract-byAI', value=date_list)
 
-    df_slump = df_col_sel.loc[ df['Article Title'].str.contains('slump',case=False) &
+    df_col_sel.insert(loc=4, column='period-from-paper', value=['TBA'] * len(location_list))
+    df_col_sel.insert(loc=5, column='extent-lat-lon', value=['TBA']*len(location_list))
+    df_col_sel.insert(loc=6, column='link-to-data', value=['TBA']*len(location_list))
+
+    df_slump = df_col_sel.loc[ df['Article Title'].str.contains('slump',case=False) |
                                df['Author Keywords'].str.contains('slump',case=False)]
 
     # print('df_slump:',len(df_slump))
-    sheet_dict['slump-in-Title-Keyword'] = df_slump
+    sheet_dict['slump-in-Title-or-Keyword'] = df_slump
 
+    # find record only contain landslide but not slump
+    df_no_slump = df_col_sel.loc[ ~(df['Article Title'].str.contains('slump',case=False) |
+                               df['Author Keywords'].str.contains('slump',case=False))]
+    df_landslide = df_no_slump.loc[ df['Article Title'].str.contains('landslide',case=False) |
+                               df['Author Keywords'].str.contains('landslide',case=False)]
+
+    sheet_dict['landslide-in-Tit-or-KW-no-slump'] = df_landslide
 
     return sheet_dict #df_col_sel
 
@@ -157,7 +169,7 @@ def main():
     print('record count:',len(df_all))
     sheet_dict = extract_paper_info(df_all)
 
-    save_file = 'paper_list.xlsx'
+    save_file = 'rts_paper_list.xlsx'
     # Create an Excel writer object
     writer = pd.ExcelWriter(save_file)
     for key in sheet_dict.keys():
