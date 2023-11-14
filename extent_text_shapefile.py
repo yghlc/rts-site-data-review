@@ -11,6 +11,7 @@ add time: 01 November, 2023
 import os.path
 import re
 import pandas as pd
+import math
 
 import tools
 
@@ -20,8 +21,10 @@ def get_lat_lon_one_line(text):
     # ([NS]): Matches either "N" or "S" to represent the latitude direction.
     # °?: Matches the degree symbol if there.
     # ([EW]): Matches either "E" or "W" to represent the longitude direction.
-    pattern_lat = r'(\d+\.\d+)°?([NSns])'
-    pattern_lon = r'(\d+\.\d+)°?([EWew])'
+    # \s+ : allow space
+    text = text.replace(' ','') # remove space
+    pattern_lat = r'(\d+\.?\d+)°?([NSns])'
+    pattern_lon = r'(\d+\.?\d+)°?([EWew])'
     lat_res = re.findall(pattern_lat, text)
     lon_res = re.findall(pattern_lon, text)
 
@@ -40,11 +43,17 @@ def get_lat_lon_one_line(text):
 
 
 def test_get_lat_lon_one_line():
-    sentense = '1. Peel Plateau and Richardson Mountains ("Peel") - 67.5°N to 68.5°N, 133.5°W to 138.5°W'
+    # sentense = '1. Peel Plateau and Richardson Mountains ("Peel") - 67.5°N to 68.5°N, 133.5°W to 138.5°W'
     sentense_nodeg = '1. Peel Plateau and Richardson Mountains ("Peel") - 67.5N to 68.5N, 133.5W to 138.5W'
     sentense_nodeg2 = '1. Peel Plateau and Richardson Mountains ("Peel") 8.5w'
 
-    get_lat_lon_one_line(sentense)
+    sentense = '68.9 N, 133.8 W'
+
+    # sentense = '80 E to 170 W, 55N to 77 N;'
+
+    lat_list, lon_list = get_lat_lon_one_line(sentense)
+    print(lat_list)
+    print(lon_list)
     # get_lat_lon_one_line(sentense_nodeg)
     # get_lat_lon_one_line(sentense_nodeg2)
 
@@ -56,7 +65,56 @@ def test_extract_latlon_from_text():
             if len(lats) > 0 and len(lons) > 0:
                 print(lats, lons)
 
+def is_latlon_valid(input):
+    if input == "":
+        return False
+    if isinstance(input,float):# and math.isnan(input):
+        return False
+
+    return True
+
+def latlon_text_to_geometry(input, delimiter=";"):
+
+    if is_latlon_valid(input) is False:
+        return [], []
+
+    if os.path.isfile(input):
+        with open(input) as f_obj:
+            text_lines = f_obj.readlines()
+    else:
+        text_lines = input
+        text_lines = text_lines.split(delimiter)
+
+    extent_list = []
+    extext_texts = []
+    point_list = []
+    point_texts = []
+    for line in text_lines:
+        lats, lons = get_lat_lon_one_line(line)
+        if len(lats) == 2 and len(lons) == 2:   # polygon
+            extent_list.append([lats,lons])
+            extext_texts.append(line)
+        elif len(lats) == 1 and len(lons) == 1: # points
+            point_list.append([lats,lons])
+            point_texts.append(line)
+        elif len(lats) < 1 or len(lons) < 1:    # no data
+            continue
+        else:
+            print('cannot parse a correct point or polygons from:', line)
+
+    # # bounding box: (left, bottom, right, top)
+    bounds = [[ item[1][0], item[0][0], item[1][1], item[0][1]] for item in extent_list]
+    polygons = [tools.convert_bounds_to_polygon(bound) for bound in bounds]
+
+    points = [ [item[1][0], item[0][0]] for item in point_list]     # x,y: lon, lat
+    points = [tools.to_points(p)  for p in points ]
+
+    return polygons, points
+
 def latlon_text_to_shapefile(input,save_path):
+
+    if is_latlon_valid(input) is False:
+        return [], []
 
     if os.path.isfile(input):
         with open(input) as f_obj:
@@ -103,11 +161,11 @@ def latlon_text_to_shapefile(input,save_path):
 
 
 def main():
-    # test_get_lat_lon_one_line()
+    test_get_lat_lon_one_line()
     # test_extract_latlon_from_text()
 
-    save_path = 'bernhard-assessing-2022.shp'
-    latlon_text_to_shapefile('chatpdf-out-example.txt', save_path)
+    # save_path = 'bernhard-assessing-2022.shp'
+    # latlon_text_to_shapefile('chatpdf-out-example.txt', save_path)
 
     pass
 
