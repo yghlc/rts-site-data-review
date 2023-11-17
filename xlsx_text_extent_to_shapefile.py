@@ -69,9 +69,9 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
     df_valid = pd_all.loc[ (pd_all['extent-lat-lon'] != 'TBA') | (pd_all['ID'].isin(paper_regions.keys()) )]
     print('count of valid records:', len(df_valid))
 
-    # # drop duplicated records
-    # df_valid = df_valid.drop_duplicates(subset=["extent-lat-lon"])
-    # print('count of all records after dropping duplicates:', len(df_valid))
+    # drop duplicated records
+    df_valid = df_valid.drop_duplicates(subset=["ID"])
+    print('count of all records after dropping duplicates:', len(df_valid))
 
     df_valid = df_valid.reset_index()
     extent_list = []

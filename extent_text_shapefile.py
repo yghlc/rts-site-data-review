@@ -23,6 +23,7 @@ def get_lat_lon_one_line(text):
     # ([EW]): Matches either "E" or "W" to represent the longitude direction.
     # \s+ : allow space
     text = text.replace(' ','') # remove space
+    # print(text)
     pattern_lat = r'(\d+\.?\d+)°?([NSns])'
     pattern_lon = r'(\d+\.?\d+)°?([EWew])'
     lat_res = re.findall(pattern_lat, text)
@@ -47,9 +48,10 @@ def test_get_lat_lon_one_line():
     sentense_nodeg = '1. Peel Plateau and Richardson Mountains ("Peel") - 67.5N to 68.5N, 133.5W to 138.5W'
     sentense_nodeg2 = '1. Peel Plateau and Richardson Mountains ("Peel") 8.5w'
 
-    sentense = '68.9 N, 133.8 W'
+    # sentense = '68.9 N, 133.8 W'
 
     # sentense = '80 E to 170 W, 55N to 77 N;'
+    sentense = 'lat/lon from Google Earth: 13 sites in 67 N to 69 N, 133 W to 135 W'
 
     lat_list, lon_list = get_lat_lon_one_line(sentense)
     print(lat_list)
