@@ -13,6 +13,40 @@ import extent_text_shapefile
 import pandas as pd
 
 import tools
+import re
+
+wkt = 'EPSG:4326'
+
+def read_all_sites_from_folder(folder):
+    folders = [item for item in os.listdir(folder) if os.path.isdir(os.path.join(folder,item) ) ]
+    # print(folders)
+
+    # get paper-id and file list
+    paper_regions = {}
+    for ff in folders:
+        match = re.match(r'^(\d+)', ff)
+        ff_path = os.path.join(folder,ff)
+        if match:
+            paper_id = int(match.group())
+            file_list = tools.get_file_list_by_ext(['.shp','.geojson'],ff_path,bsub_folder=False)
+            paper_regions[paper_id] = file_list
+
+    return paper_regions
+
+def read_sites_from_file(path):
+    # read the polygons
+    polygons = tools.read_shape_gpd_to_NewPrj(path,wkt)
+    return polygons
+
+
+def test_read_all_sites_from_folder():
+    folder_path = 'study_area_polygons'
+    paper_regions = read_all_sites_from_folder(folder_path)
+    print(paper_regions)
+
+    for key in paper_regions.keys():
+        polygons = read_sites_from_file(paper_regions[key][0])
+        print(polygons)
 
 def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
 
@@ -26,8 +60,13 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
     # print(pd_all)
     print('count of all records:', len(pd_all))
 
+    paper_regions = read_all_sites_from_folder('study_area_polygons')
+    print(paper_regions)
+    # df_site_in_files = pd_all[pd_all['ID'].isin(paper_regions.keys())]
+    # print(df_site_in_files)
+
     # remove invalid records
-    df_valid = pd_all.loc[ pd_all['extent-lat-lon'] != 'TBA' ]
+    df_valid = pd_all.loc[ (pd_all['extent-lat-lon'] != 'TBA') | (pd_all['ID'].isin(paper_regions.keys()) )]
     print('count of valid records:', len(df_valid))
 
     # # drop duplicated records
@@ -46,17 +85,27 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
         # print(idx, row)
         # print(idx,row['ID'], row['extent-lat-lon'])
 
-        polygons, points = extent_text_shapefile.latlon_text_to_geometry(row['extent-lat-lon'],delimiter=';')
+        if row['ID'] in paper_regions.keys():
+            polygons = []
+            for file_path in paper_regions[row['ID']]:
+                polys = read_sites_from_file(file_path)
+                polygons.extend(polys)
 
-        # print(polygons)
-        # print(points)
-        if len(polygons) > 0:
             extent_list.extend(polygons)
-            extext_row_idx.extend([idx]*len(polygons))
+            extext_row_idx.extend([idx] * len(polygons))
 
-        if len(points) > 0:
-            point_list.extend(points)
-            point_row_idx.extend([idx]*len(points))
+        else:
+            polygons, points = extent_text_shapefile.latlon_text_to_geometry(row['extent-lat-lon'],delimiter=';')
+
+            # print(polygons)
+            # print(points)
+            if len(polygons) > 0:
+                extent_list.extend(polygons)
+                extext_row_idx.extend([idx]*len(polygons))
+
+            if len(points) > 0:
+                point_list.extend(points)
+                point_row_idx.extend([idx]*len(points))
 
 
     # print(extent_list)
@@ -65,7 +114,6 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
     # save to geopackage
 
     # save to file
-    wkt = 'EPSG:4326'
     if len(extent_list) > 0:
         save_pd = df_valid.iloc[extext_row_idx]
         save_pd = save_pd[['ID','Article Title','Authors','extent-lat-lon','DOI']]
@@ -86,7 +134,9 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
 
 def main():
 
-    input_xlsx = "rts_paper_list_v0_Nov14.xlsx"
+    # test_read_all_sites_from_folder()
+
+    input_xlsx = "rts_paper_list_v0_Nov16.xlsx"
     save_path = "rts_research_sites.shp"
     xlsx_latlon_text_to_shapefile(input_xlsx, save_path)
 
