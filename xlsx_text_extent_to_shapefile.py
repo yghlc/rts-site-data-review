@@ -39,6 +39,10 @@ def read_sites_from_file(path):
     return polygons
 
 
+def read_continentalScale_works(ids_txt):
+    ids = [ int(item.strip()) for item in tools.read_list_from_txt(ids_txt) ]
+    return ids
+
 def test_read_all_sites_from_folder():
     folder_path = 'study_area_polygons'
     paper_regions = read_all_sites_from_folder(folder_path)
@@ -118,6 +122,12 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
         save_pd = df_valid.iloc[extext_row_idx]
         save_pd = save_pd[['ID','Article Title','Authors','extent-lat-lon','DOI']]
         save_pd['Polygons'] = extent_list
+
+        # add indicator showing if the polygons belong to continental scale
+        save_pd['contiScale'] = [0] * len(extent_list)
+        contiscale_ids = read_continentalScale_works('continentalScale.txt')
+        save_pd.loc[save_pd['ID'].isin(contiscale_ids), 'contiScale'] = 1
+
         tools.save_geometry_to_files(save_pd, 'Polygons', wkt, save_path)
         print('saved to %s'%save_path)
 
@@ -136,7 +146,7 @@ def main():
 
     # test_read_all_sites_from_folder()
 
-    input_xlsx = "rts_paper_list_v0_Nov16.xlsx"
+    input_xlsx = "rts_paper_list_v0_Nov20.xlsx"
     save_path = "rts_research_sites.shp"
     xlsx_latlon_text_to_shapefile(input_xlsx, save_path)
 

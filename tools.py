@@ -119,3 +119,10 @@ def get_file_list_by_ext(ext,folder,bsub_folder):
         sub_folders.pop(0)
 
     return files
+
+
+def read_list_from_txt(file_name):
+    with open(file_name,'r') as f_obj:
+        lines = f_obj.readlines()
+        lines = [item.strip() for item in lines]
+        return lines
