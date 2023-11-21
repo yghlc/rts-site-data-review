@@ -115,13 +115,19 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
     # print(extent_list)
     # print(point_list)
 
+    df_valid['ID'] = df_valid['ID'].astype('int')
+
     # save to geopackage
+    extent_id_list = []
+    point_id_list = []
 
     # save to file
     if len(extent_list) > 0:
         save_pd = df_valid.iloc[extext_row_idx]
         save_pd = save_pd[['ID','Article Title','Authors','extent-lat-lon','DOI']]
+        save_pd.rename(columns={'Article Title':'Title', 'extent-lat-lon':'ext-lat-lon'}, inplace=True)
         save_pd['Polygons'] = extent_list
+        extent_id_list = save_pd['ID'].to_list()
 
         # add indicator showing if the polygons belong to continental scale
         save_pd['contiScale'] = [0] * len(extent_list)
@@ -134,10 +140,23 @@ def xlsx_latlon_text_to_shapefile(xlsx_path,save_path):
     if len(point_list) > 0:
         save_pd = df_valid.iloc[point_row_idx]
         save_pd = save_pd[['ID','Article Title','Authors','extent-lat-lon','DOI']]
+        save_pd.rename(columns={'Article Title': 'Title', 'extent-lat-lon': 'ext-lat-lon'}, inplace=True)
         save_pd['Points'] = point_list
+        point_id_list = save_pd['ID'].to_list()
+
         save_path = os.path.splitext(save_path)[0] + '_point'+ os.path.splitext(save_path)[1]
         tools.save_geometry_to_files(save_pd, 'Points', wkt, save_path)
         print('saved to %s'%save_path)
+
+
+    print('Extent count:', len(extent_id_list))
+    print('Unique Extent ID count:', len(set(extent_id_list)))
+
+    print('Point count:', len(point_id_list))
+    print('Unique Point ID count:', len(set(point_id_list)))
+
+    all_ids = extent_id_list + point_id_list
+    print('Unique ID count:', len(set(all_ids)))
 
 
 
@@ -146,7 +165,7 @@ def main():
 
     # test_read_all_sites_from_folder()
 
-    input_xlsx = "rts_paper_list_v0_Nov20.xlsx"
+    input_xlsx = "rts_paper_list_v0_Nov21.xlsx"
     save_path = "rts_research_sites.shp"
     xlsx_latlon_text_to_shapefile(input_xlsx, save_path)
 
