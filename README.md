@@ -38,11 +38,22 @@ Notes: for the format of the latitude and longitude,
 please use decimal degrees (e.g. 68.923 N), 
 not "Degrees Minutes Seconds" (68°55 '22 S"). If the paper didn't provide lat/lon in decimal degrees, please convert them to decimal degrees.  A consistent format is necessary for scripts to convert them (lat/lon) into a map.
 
+### Convert the spreedsheet to a shapefile: 
+If you want to check the data or the map of RTS research sites in GIS software, 
+please follow the steps here:
+```
+1. Download the spreedsheet file and save it to a excel file (*.xlsx)
+2. run "xlsx_text_extent_to_shapefile.py". Please modify the file names in the script if needed:
+    input_xlsx = "rts_paper_list_v0_Nov21.xlsx"
+    save_path = "rts_research_sites.shp"
+3. xlsx_text_extent_to_shapefile.py will create a shapefile, then you can load it into 
+a GIS software. 
+
+```
 
 
-### Remarks: 
+### Can we use AI for this work?: 
 
-We hope to have a map to present during ICOP 2024 (June 16-20, 2024) and will try my best to get this map ready as soon as possible.  
 The most time-consuming and tedious parts are downloading each paper or report and finding the information we need. 
 I also tried to use AI to extract the latitude and longitude from the full text of papers, but from my experience, 
 the AI may make up some information that looks reasonable, but actually, inaccurate or incorrect. 
@@ -52,8 +63,11 @@ It looks reasonable but when I looked closely and compared with the map in the o
 If the paper explicitly mentioned the study area and lat/lon in text, the AI may do a good job. 
 So, I don't think we can totally use AI to do this work. 
 
-
+### Remarks:
 Thank you for reading this and looking forward to your contribution.  
+
+We hope to have a map to present during ICOP 2024 (June 16-20, 2024) and will try our best to get this map ready as soon as possible.  
+
 Please let me know if you have any questions, comments or suggestions by 
 creating an issue in this repo. 
 
