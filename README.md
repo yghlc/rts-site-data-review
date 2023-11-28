@@ -1,6 +1,6 @@
 # rts-site-data-review
 Compiling and reviewing the study sites for retrogressive thaw slumps (RTS), 
-a part of works of International Permafrost Association (IPA) 
+a part of works of International Permafrost Association (IPA) action group
 [RTS InTrain: Retrogressive thaw slump inventory and machine learning training-data development](https://www.permafrost.org/group/rts-intrain-retrogressive-thaw-slump-inventory-and-machine-learning-training-data-development/). 
 
 
