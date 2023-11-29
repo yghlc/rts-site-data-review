@@ -8,7 +8,7 @@ a part of works of International Permafrost Association (IPA) action group
 
 I used the keywords: permafrost and (thaw slump or landslide or (thermokarst, not lake, not pond)) and exported paper records from the database of Web of Science. 
 Then I used panda (a python package) to organize the table and manually uploaded it 
-to Google Drive: https://docs.google.com/spreadsheets/d/1hIF7aP7iuFzR5b-piq09TpagGzs1VpfF/edit#gid=921013092
+to Google Drive: https://docs.google.com/spreadsheets/d/1QB11cwWWfML-STEJGKPYU5OAJdjCO6WG/edit#gid=1013535102
 
 This spreadsheet includes four sheets (tables):
 
