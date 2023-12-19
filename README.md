@@ -63,6 +63,13 @@ It looks reasonable but when I looked closely and compared with the map in the o
 If the paper explicitly mentioned the study area and lat/lon in text, the AI may do a good job. 
 So, I don't think we can totally use AI to do this work. 
 
+
+### TODO:
+- [ ] Add more research sites from Russian language literatures
+- [ ] Also use keywords: "thermocirque", "thermos cirque", "thermoterrace", "thermo terrace", "thermodenudation", "thermal denudation", and "thermo cirque*" to find more papers.
+
+
+
 ### Remarks:
 Thank you for reading this and looking forward to your contribution.  
 
